@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:vinyl/background/background_service.dart';
-import 'package:vinyl/services/media_record.dart';
-import 'package:vinyl/services/player_interface.dart';
-import 'package:vinyl/vinyl.dart';
+import 'package:vinyl/core/background/background_service.dart';
+import 'package:vinyl/core/services/media_record.dart';
+import 'package:vinyl/core/services/player_interface.dart';
 
 class MobilePlayerController extends PlayerInterface {
   MobilePlayerController({required this.audioHandler}) {

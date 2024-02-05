@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vinyl/services/media_record.dart';
 import 'package:vinyl/vinyl.dart';
 
 final vinyl = Vinyl.i;

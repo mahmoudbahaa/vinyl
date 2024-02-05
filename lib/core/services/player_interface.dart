@@ -1,6 +1,5 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/widgets.dart';
-import 'package:vinyl/services/media_record.dart';
+import 'package:vinyl/core/services/media_record.dart';
 
 const eMessage =
     'You forgot to initialize Vinyl\nCall "Vinyl.init()" in main.dart';

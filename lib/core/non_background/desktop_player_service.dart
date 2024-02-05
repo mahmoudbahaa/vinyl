@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:media_kit/media_kit.dart';
-import 'package:vinyl/services/media_record.dart';
-import 'package:vinyl/services/mediakit_player.dart';
-import 'package:vinyl/services/player_interface.dart';
+import 'package:vinyl/core/services/media_record.dart';
+import 'package:vinyl/core/services/mediakit_player.dart';
+import 'package:vinyl/core/services/player_interface.dart';
 
 class DesktopPlayerController extends PlayerInterface {
   DesktopPlayerController({
