@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'player_interface.dart';
+part of 'media_record.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -25,7 +25,6 @@ MediaRecord _$MediaRecordFromJson(Map<String, dynamic> json) => MediaRecord(
       displayTitle: json['displayTitle'] as String?,
       displayDescription: json['displayDescription'] as String?,
       album: json['album'] as String?,
-      extras: json['extras'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$MediaRecordToJson(MediaRecord instance) =>
@@ -42,5 +41,4 @@ Map<String, dynamic> _$MediaRecordToJson(MediaRecord instance) =>
       'displayTitle': instance.displayTitle,
       'displayDescription': instance.displayDescription,
       'album': instance.album,
-      'extras': instance.extras,
     };

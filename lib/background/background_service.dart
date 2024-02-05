@@ -1,6 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:vinyl/services/player_interface.dart';
+import 'package:vinyl/services/media_record.dart';
 import 'package:vinyl/services/mediakit_player.dart';
 
 Future<MediaKitBackgroundPlayer> initBackgroundAudio(

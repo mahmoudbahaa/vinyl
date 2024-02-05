@@ -1,11 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/widgets.dart';
-import 'package:json_annotation/json_annotation.dart';
-
-part 'player_interface.g.dart';
 
 const eMessage =
     'You forgot to initialize Vinyl\nCall "Vinyl.init()" in main.dart';
+
 
 enum ButtonState {
   paused,
@@ -37,71 +35,6 @@ class ProgressBarState {
   }
 }
 
-/// Store media information here
-@JsonSerializable()
-class MediaRecord {
-  MediaRecord({
-    required this.id,
-    required this.title,
-    required this.mediaUri,
-    this.mediaHeaders,
-    this.duration,
-    this.artHeaders,
-    this.artUri,
-    this.artist,
-    this.displaySubtitle,
-    this.displayTitle,
-    this.displayDescription,
-    this.album,
-    this.extras,
-  });
-
-  factory MediaRecord.fromJson(Map<String, dynamic> json) =>
-      _$MediaRecordFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MediaRecordToJson(this);
-  final String id;
-
-  /// store media url can be file or web
-  final String mediaUri;
-
-  final String title;
-
-  /// headers for the media file
-  final Map<String, String>? mediaHeaders;
-
-  final Duration? duration;
-
-  final Map<String, String>? artHeaders;
-  final String? artUri;
-  final String? artist;
-  final String? displaySubtitle;
-  final String? displayTitle;
-  final String? displayDescription;
-  final String? album;
-  final Map<String, dynamic>? extras;
-
-  /// convert media record to media
-}
-
-class MediaRecordKeys {
-  static const String id = 'id';
-  static const String title = 'title';
-  static const String album = 'album';
-  static const String artHeaders = 'artHeaders';
-  static const String artist = 'artist';
-  static const String artUri = 'artUri';
-  static const String displayDescription = 'displayDescription';
-  static const String displaySubtitle = 'displaySubtitle';
-  static const String displayTitle = 'displayTitle';
-  static const String duration = 'duration';
-  static const String extras = 'extras';
-  static const String genre = 'genre';
-  static const String playable = 'playable';
-  static const String rating = 'rating';
-  static const String mediaUri = 'mediaUri';
-  static const String mediaHeaders = 'mediaHeaders';
-}
 
 /// Define default metadata to display
 /// e.g. default image or title
