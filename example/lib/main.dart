@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vinyl/vinyl.dart';
 
-final vinyl = Vinyl.i;
-
 Future<void> main() async {
   const config = AudioServiceConfig(
     androidNotificationChannelId: "app.dumb.vinyltest",

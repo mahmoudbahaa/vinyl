@@ -12,6 +12,9 @@ import 'package:vinyl/core/services/player_interface.dart';
 export 'package:audio_service/audio_service.dart' show AudioServiceConfig;
 export 'package:vinyl/core/services/media_record.dart' show MediaRecord;
 
+
+final vinyl = Vinyl.i;
+
 class Vinyl {
   // singleton
   Vinyl._init();
