@@ -11,7 +11,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-Batteries included audio/video util package
+Batteries included audio util package
 
 ## Features
 
