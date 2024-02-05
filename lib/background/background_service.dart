@@ -21,6 +21,7 @@ Future<MediaKitBackgroundPlayer> initBackgroundAudio(
 class MediaKitBackgroundPlayer extends BaseAudioHandler {
   MediaKitBackgroundPlayer({required this.mediaKit}) {
     try {
+      initBackgroundPlayer();
       initListeners();
     } catch (e) {
       debugPrint('Error initializing audio handler: $e');
@@ -35,7 +36,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     _listenIsCompleted();
     _listenToPosition();
     _listenToBufferedPosition();
-    // _listenForDurationChanges();
+    _listenForDurationChanges();
     _listenToMedia();
     _listenToPlaybackSpeed();
   }
@@ -46,7 +47,6 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
         controls: [
           MediaControl.skipToPrevious,
           MediaControl.pause,
-          MediaControl.stop,
           MediaControl.skipToNext,
         ],
         systemActions: const {
@@ -68,7 +68,6 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
           controls: [
             MediaControl.skipToPrevious,
             if (playing) MediaControl.pause else MediaControl.play,
-            MediaControl.stop,
             MediaControl.skipToNext,
           ],
           playing: playing,
@@ -100,7 +99,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
       playbackState.add(
         playbackState.value.copyWith(
           processingState: playListComplete
-              ? AudioProcessingState.idle
+              ? AudioProcessingState.ready
               : AudioProcessingState.completed,
         ),
       );
@@ -130,25 +129,24 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
   }
 
   // total duration pos
-  // void _listenForDurationChanges() {
-  //   mediaKit.stream.duration.listen((duration) {
-  //     // TODO review
-  //
-  //     playbackState.add(playbackState.value.copyWith(
-  //       updatePosition:
-  //     ))
-  //
-  //     final index = mediaKit.state.playlist.index;
-  //     final newQueue = queue.value;
-  //     if (newQueue.isEmpty) return;
-  //     final oldMediaItem = newQueue[index];
-  //     final newMediaItem = oldMediaItem.copyWith(duration: duration);
-  //     newQueue[index] = newMediaItem;
-  //
-  //     queue.value = newQueue;
-  //     mediaItem.add(newMediaItem);
-  //   });
-  // }
+  void _listenForDurationChanges() {
+    mediaKit.stream.duration.listen((duration) {
+      // TODO review
+      // we do this because not all links will have total duration available
+      // at runtime so we wait until we get a duration
+      if (queue.value.isEmpty) return;
+      final newQueue = queue.value;
+      final index = mediaKit.state.playlist.index;
+
+      final oldMediaItem = newQueue[index];
+      final newMediaItem = oldMediaItem.copyWith(duration: duration);
+      newQueue[index] = newMediaItem;
+
+      // with the updated duration value
+      queue.value = newQueue;
+      mediaItem.add(newMediaItem);
+    });
+  }
 
 ////////////////////////////////////////////////////////////////////////////////
 

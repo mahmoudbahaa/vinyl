@@ -4,12 +4,13 @@ import 'package:vinyl/vinyl.dart';
 
 final vinyl = Vinyl.i;
 
-void main() {
+Future<void> main() async {
   const config = AudioServiceConfig(
-      androidNotificationChannelId: "app.dumb.vinyltest",
-      androidNotificationChannelName: "test Player",
-      androidNotificationOngoing: true);
-  vinyl.init(audioConfig: config);
+    androidNotificationChannelId: "app.dumb.vinyltest",
+    androidNotificationChannelName: "test Player",
+    androidNotificationOngoing: true,
+  );
+  await vinyl.init(audioConfig: config);
 
   runApp(const MyApp());
 }
@@ -23,21 +24,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -59,45 +45,66 @@ class _HomePageState extends State<HomePage> {
   // testing basic media controls
   // testing ui response
 
-  List<MediaObject> medias = [
-    MediaObject('test1', 'todo',
-        'https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav'),
-    MediaObject('test2', 'todo',
-        'https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav'),
-    MediaObject('test3', 'todo',
-        'https://www2.cs.uic.edu/~i101/SoundFiles/gettysburg.wav'),
-    MediaObject('test4', 'todo',
-        'https://www2.cs.uic.edu/~i101/SoundFiles/PinkPanther60.wav'),
-    MediaObject('test5', 'todo',
-        'https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav'),
+  List<MediaRecord> medias = [
+    MediaRecord(
+      id: "12312",
+      title: 'mp3 test file',
+      mediaUri:
+          'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3',
+    ),
+    MediaRecord(
+      id: 'test2',
+      title: 'flac test file',
+      mediaUri: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Sample-FLAC-File.flac',
+    ),
+    MediaRecord(
+      id: 'test3',
+      title: 'ogg test file',
+      mediaUri: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Sample-OGG-File.ogg',
+    ),
+    MediaRecord(
+      id: 'test4',
+      title: 'todoasdasdasd',
+      mediaUri: 'https://www2.cs.uic.edu/~i101/SoundFiles/PinkPanther60.wav',
+    ),
+    MediaRecord(
+      id: 'test5',
+      title: 'asadsadtodo',
+      mediaUri: 'https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav',
+    ),
   ];
+
+  Future<void> playMany() async {
+    await vinyl.player.loadMedia(medias);
+    await vinyl.player.play();
+  }
+
+  Future<void> playOne() async {
+    await vinyl.player.loadMedia([medias.first]);
+    await vinyl.player.play();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
-              onPressed: () async {
-                final item = MediaRecord(
-                  id: '123123',
-                  title: medias.first.name,
-                  mediaUri: medias.first.uri,
-                );
-                await vinyl.player.loadMedia([item]);
-                await vinyl.player.play();
-              },
-              child: const Text('Play me'))
+            onPressed: () async {
+              await playOne();
+            },
+            child: const Text('Play one'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await playMany();
+            },
+            child: const Text('Play Many'),
+          )
         ],
       ),
     );
   }
-}
-
-class MediaObject {
-  final String name;
-  final String image;
-  final String uri;
-
-  MediaObject(this.name, this.image, this.uri);
 }

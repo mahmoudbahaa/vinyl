@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:vinyl/background/background_service.dart';
+import 'package:vinyl/background/mobile_player_controller.dart';
 import 'package:vinyl/non_background/desktop_player_service.dart';
 import 'package:vinyl/services/mediakit_player.dart';
 import 'package:vinyl/services/player_interface.dart';
@@ -45,6 +46,7 @@ class Vinyl {
 
       try {
         final tmp = await initBackgroundAudio(mKit, audioConfig);
+        player = MobilePlayerController(audioHandler: tmp);
       } on Exception catch (e) {
         debugPrint('Failed to initialize background player');
         debugPrint(e.toString());
