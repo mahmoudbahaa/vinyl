@@ -2,23 +2,16 @@ import 'dart:async';
 import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:vinyl/core/player_interface.dart';
+import 'package:vinyl/background/background_service.dart';
+import 'package:vinyl/services/player_interface.dart';
 import 'package:vinyl/vinyl.dart';
 
-abstract class MobilePlayerController extends PlayerInterface {
-  MobilePlayerController({
-    required super.metadata,
-  }) {
-    if (Vinyl.i.backgroundPlayer == null) {
-      throw Exception(eMessage);
-    }
-
-    audioHandler = Vinyl.i.backgroundPlayer!;
+class MobilePlayerController extends PlayerInterface {
+  MobilePlayerController({required this.audioHandler}) {
     init();
   }
 
-  // late final MediaKitBackgroundPlayer _audioHandler;
-  late final BaseAudioHandler audioHandler;
+  final MediaKitBackgroundPlayer audioHandler;
 
   final idGen = Random();
 

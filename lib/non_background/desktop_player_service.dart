@@ -1,20 +1,17 @@
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:vinyl/core/mediakit_player.dart';
 
-import 'package:vinyl/core/player_interface.dart';
+import 'package:vinyl/services/mediakit_player.dart';
 import 'package:vinyl/vinyl.dart';
 
-abstract class DesktopPlayerController extends PlayerInterface {
-  DesktopPlayerController({
-    required super.metadata,
-  }) {
-    if (Vinyl.i.backgroundPlayer == null) {
-      throw Exception(eMessage);
-    }
+import '../services/player_interface.dart';
 
-    _player = Vinyl.i.player!;
+class DesktopPlayerController extends PlayerInterface {
+  DesktopPlayerController({
+    required MediaKitPlayer player,
+  }) {
+    _player = player;
     setUpListeners();
   }
 
@@ -133,26 +130,26 @@ abstract class DesktopPlayerController extends PlayerInterface {
     });
   }
 
-  Media _convertToMedia(MediaItem item) {
-    final url = item
-
-    final g = MediaRecord(id: '123123', title: 'res', mediaUri: 'dsfdsf',);
-
-    return
-      Media
-        (
-
-      )
-  }
+  // Media _convertToMedia(MediaItem item) {
+  //   final url = item
+  //
+  //   final g = MediaRecord(id: '123123', title: 'res', mediaUri: 'dsfdsf',);
+  //
+  //   return
+  //     Media
+  //       (
+  //
+  //     )
+  // }
 
   @override
-  Future<void> loadMedia(List<MediaItem> input, {
+  Future<void> loadMedia(
+    List<MediaItem> input, {
     Duration listenedPos = Duration.zero,
     int trackIndex = 0,
   }) async {
-    await _player.openTracks(input);
-    await audioHandler.skipToQueueItem(trackIndex);
-    await audioHandler.seek(listenedPos);
+    // TODO
+    // _player.openTracks(input);
   }
 
   @override
@@ -171,14 +168,12 @@ abstract class DesktopPlayerController extends PlayerInterface {
   Future<void> seek(Duration position) => _player.seek(position);
 
   @override
-  Future<void> seekBackward(Duration positionOffset) =>
-      _player.skipBackwards(
+  Future<void> seekBackward(Duration positionOffset) => _player.skipBackwards(
         positionOffset,
       );
 
   @override
-  Future<void> seekForward(Duration positionOffset) =>
-      _player.skipForwards(
+  Future<void> seekForward(Duration positionOffset) => _player.skipForwards(
         positionOffset,
       );
 

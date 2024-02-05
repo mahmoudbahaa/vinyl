@@ -1,10 +1,15 @@
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:vinyl/core/background_service.dart';
-import 'package:vinyl/core/mediakit_player.dart';
+import 'package:vinyl/background/background_service.dart';
+import 'package:vinyl/non_background/desktop_player_service.dart';
+import 'package:vinyl/services/mediakit_player.dart';
+import 'package:vinyl/services/player_interface.dart';
+
 export 'package:audio_service/audio_service.dart' show AudioServiceConfig;
+export 'package:audio_service/audio_service.dart' show MediaItem;
 export 'package:media_kit/media_kit.dart' show Media;
 
 class Vinyl {
@@ -38,12 +43,18 @@ class Vinyl {
         throw Exception('Audioconfig is required for audio service to work');
       }
 
-      backgroundPlayer = await initBackgroundAudio(mKit, audioConfig);
+      try {
+        final tmp = await initBackgroundAudio(mKit, audioConfig);
+      } on Exception catch (e) {
+        debugPrint('Failed to initialize background player');
+        debugPrint(e.toString());
+      }
     } else {
-      player = mKit;
+      player = DesktopPlayerController(player: mKit);
     }
   }
 
-  late final MediaKitBackgroundPlayer? backgroundPlayer;
-  late final MediaKitPlayer? player;
+  //TODO add dispose
+
+  late final PlayerInterface player;
 }

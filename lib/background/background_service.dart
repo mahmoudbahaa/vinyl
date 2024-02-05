@@ -1,18 +1,24 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
-
-import 'package:vinyl/core/mediakit_player.dart';
+import 'package:vinyl/services/player_interface.dart';
+import 'package:vinyl/services/mediakit_player.dart';
 
 Future<MediaKitBackgroundPlayer> initBackgroundAudio(
-    MediaKitPlayer mediaKit,AudioServiceConfig audioConfig) async {
+  MediaKitPlayer mediaKit,
+  AudioServiceConfig? audioConfig,
+) async {
+  // initialize without background audio
+  if (audioConfig == null) return MediaKitBackgroundPlayer(player: mediaKit);
+
+  // initialize with background audio
   return AudioService.init(
     builder: () => MediaKitBackgroundPlayer(player: mediaKit),
     config: audioConfig,
   );
 }
+
 //
 class MediaKitBackgroundPlayer extends BaseAudioHandler {
-
   MediaKitBackgroundPlayer({required this.player}) {
     try {
       initListeners();
@@ -20,14 +26,15 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
       debugPrint('Error initializing audio handler: $e');
     }
   }
+
   late final MediaKitPlayer player;
 
   MediaKitPlayer get mediaKit => player;
 
   void initListeners() {
-    _notifyIsPlaying();
-    listenIsBuffering();
-    listenToIsCompleted();
+    _listenIsPlaying();
+    _listenIsBuffering();
+    _listenIsCompleted();
     _listenToPosition();
     _listenToBufferedPosition();
     _listenForDurationChanges();
@@ -62,8 +69,9 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     );
   }
 
+////////////////////////////////////////////////////////////////////////////////
   // playback state
-  void _notifyIsPlaying() {
+  void _listenIsPlaying() {
     player.stream.playing.listen((bool playing) {
       playbackState.add(
         playbackState.value.copyWith(
@@ -73,31 +81,24 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
             MediaControl.stop,
             MediaControl.skipToNext,
           ],
-          systemActions: const {
-            MediaAction.seek,
-          },
-          androidCompactActionIndices: const [0, 1, 3],
           playing: playing,
-          processingState: processMap[player.state.buffering
-              ? ProcessingState.buffering
-              : ProcessingState.ready]!,
         ),
       );
     });
   }
 
-  void listenIsBuffering() {
+  void _listenIsBuffering() {
     player.stream.buffering.listen((bool buffering) {
       playbackState.add(
         playbackState.value.copyWith(
           processingState: processMap[
-          buffering ? ProcessingState.buffering : ProcessingState.ready]!,
+              buffering ? ProcessingState.buffering : ProcessingState.ready]!,
         ),
       );
     });
   }
 
-  void listenToIsCompleted() {
+  void _listenIsCompleted() {
     player.stream.completed.listen((bool completed) {
       final playerState = player.mediaKit.state;
 
@@ -115,15 +116,20 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     });
   }
 
+////////////////////////////////////////////////////////////////////////////////
+
   // playback positions
+
+  // current pos
   void _listenToPosition() {
-    // player.stream.position.listen((pos) {
-    //   playbackState.add(
-    //     playbackState.value.copyWith(),
-    //   );
-    // });
+    player.stream.position.listen((pos) {
+      playbackState.add(
+        playbackState.value.copyWith(updatePosition: pos),
+      );
+    });
   }
 
+  // buffered pos
   void _listenToBufferedPosition() {
     player.stream.buffer.listen((bufferedPosition) {
       playbackState.add(
@@ -132,8 +138,10 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     });
   }
 
+  // total duration pos
   void _listenForDurationChanges() {
     player.stream.duration.listen((duration) {
+      // TODO review
       final index = player.state.playlist.index;
       final newQueue = queue.value;
       if (newQueue.isEmpty) return;
@@ -145,6 +153,8 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
       mediaItem.add(newMediaItem);
     });
   }
+
+////////////////////////////////////////////////////////////////////////////////
 
   // media changes
   void _listenToCurrentMedia() {
@@ -161,7 +171,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     });
   }
 
-  // playback other states
+  // speed state
   void _listenToPlaybackSpeed() {
     player.stream.rate.listen((speed) {
       playbackState.add(
@@ -170,6 +180,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     });
   }
 
+////////////////////////////////////////////////////////////////////////////////
   // queue controls
   void clearQueue() {
     while (queue.value.isNotEmpty) {
@@ -177,11 +188,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     }
   }
 
-  @override
-  Future<void> addQueueItems(List<MediaItem> mediaItems) async {
-    // TODO: implement addQueueItems
-
-  }
+  Future<void> loadItems(List<MediaRecord> mediaItems) async {}
 
   @override
   Future<void> skipToQueueItem(int index) async {
