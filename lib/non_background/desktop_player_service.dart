@@ -145,8 +145,9 @@ class DesktopPlayerController extends PlayerInterface {
     Duration listenedPos = Duration.zero,
     int trackIndex = 0,
   }) async {
-    // TODO
-    // _player.openTracks(input);
+    await _player.openTracks(input.map((e) => e.toMediaKit()).toList());
+    await _player.jumpTrack(trackIndex);
+    await _player.seek(listenedPos);
   }
 
   @override
