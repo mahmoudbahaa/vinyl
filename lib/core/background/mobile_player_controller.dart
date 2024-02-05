@@ -49,6 +49,7 @@ class MobilePlayerController extends PlayerInterface {
   void _listenToPlaybackState() {
     audioHandler.playbackState.listen((playbackState) {
       if (queue.value.isNotEmpty) {
+        isStopped.value = false;
         final isPlaying = playbackState.playing;
         final processingState = playbackState.processingState;
         if (processingState == AudioProcessingState.loading ||
@@ -60,6 +61,7 @@ class MobilePlayerController extends PlayerInterface {
           playButton.value = ButtonState.playing;
         }
       } else {
+        isStopped.value = true;
         playButton.value = ButtonState.paused;
       }
     });

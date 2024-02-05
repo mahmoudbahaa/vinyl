@@ -267,14 +267,13 @@ class SeekForwardButton extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: controller.isStopped,
       builder: (_, value, __) {
-        return IconButton(
-          color: value ? Colors.green : Colors.white,
-          icon: const Icon(Icons.forward_10),
+        return ElevatedButton(
           onPressed: value
               ? null
               : () async {
                   await controller.seekForward(seekValue);
                 },
+          child: Text('${seekValue.inSeconds}s'),
         );
       },
     );
@@ -294,13 +293,13 @@ class SeekBackwardButton extends StatelessWidget {
     final controller = vinyl.player;
     return ValueListenableBuilder(
       valueListenable: controller.isStopped,
-      builder: (context, value, child) => IconButton(
-        icon: const Icon(Icons.replay),
+      builder: (context, value, child) => ElevatedButton(
         onPressed: value
             ? null
             : () async {
                 await controller.seekBackward(seekValue);
               },
+        child: Text('${seekValue.inSeconds}s'),
       ),
     );
   }
