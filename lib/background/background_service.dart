@@ -8,18 +8,18 @@ Future<MediaKitBackgroundPlayer> initBackgroundAudio(
   AudioServiceConfig? audioConfig,
 ) async {
   // initialize without background audio
-  if (audioConfig == null) return MediaKitBackgroundPlayer(player: mediaKit);
+  if (audioConfig == null) return MediaKitBackgroundPlayer(mediaKit: mediaKit);
 
   // initialize with background audio
   return AudioService.init(
-    builder: () => MediaKitBackgroundPlayer(player: mediaKit),
+    builder: () => MediaKitBackgroundPlayer(mediaKit: mediaKit),
     config: audioConfig,
   );
 }
 
 //
 class MediaKitBackgroundPlayer extends BaseAudioHandler {
-  MediaKitBackgroundPlayer({required this.player}) {
+  MediaKitBackgroundPlayer({required this.mediaKit}) {
     try {
       initListeners();
     } catch (e) {
@@ -27,9 +27,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     }
   }
 
-  late final MediaKitPlayer player;
-
-  MediaKitPlayer get mediaKit => player;
+  final MediaKitPlayer mediaKit;
 
   void initListeners() {
     _listenIsPlaying();
@@ -37,18 +35,10 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     _listenIsCompleted();
     _listenToPosition();
     _listenToBufferedPosition();
-    _listenForDurationChanges();
-    _listenToCurrentMedia();
+    // _listenForDurationChanges();
+    _listenToMedia();
     _listenToPlaybackSpeed();
   }
-
-  final processMap = const {
-    ProcessingState.idle: AudioProcessingState.idle,
-    ProcessingState.loading: AudioProcessingState.loading,
-    ProcessingState.buffering: AudioProcessingState.buffering,
-    ProcessingState.ready: AudioProcessingState.ready,
-    ProcessingState.completed: AudioProcessingState.completed,
-  };
 
   void initBackgroundPlayer() {
     playbackState.add(
@@ -72,7 +62,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
 ////////////////////////////////////////////////////////////////////////////////
   // playback state
   void _listenIsPlaying() {
-    player.stream.playing.listen((bool playing) {
+    mediaKit.stream.playing.listen((bool playing) {
       playbackState.add(
         playbackState.value.copyWith(
           controls: [
@@ -88,19 +78,20 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
   }
 
   void _listenIsBuffering() {
-    player.stream.buffering.listen((bool buffering) {
+    mediaKit.stream.buffering.listen((bool buffering) {
       playbackState.add(
         playbackState.value.copyWith(
-          processingState: processMap[
-              buffering ? ProcessingState.buffering : ProcessingState.ready]!,
+          processingState: buffering
+              ? AudioProcessingState.buffering
+              : AudioProcessingState.ready,
         ),
       );
     });
   }
 
   void _listenIsCompleted() {
-    player.stream.completed.listen((bool completed) {
-      final playerState = player.mediaKit.state;
+    mediaKit.stream.completed.listen((bool completed) {
+      final playerState = mediaKit.mediaKit.state;
 
       final currentIndex = playerState.playlist.index;
       final playlistLastIndex = playerState.playlist.medias.length - 1;
@@ -108,9 +99,9 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
 
       playbackState.add(
         playbackState.value.copyWith(
-          processingState: processMap[playListComplete
-              ? ProcessingState.idle
-              : ProcessingState.completed]!,
+          processingState: playListComplete
+              ? AudioProcessingState.idle
+              : AudioProcessingState.completed,
         ),
       );
     });
@@ -122,7 +113,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
 
   // current pos
   void _listenToPosition() {
-    player.stream.position.listen((pos) {
+    mediaKit.stream.position.listen((pos) {
       playbackState.add(
         playbackState.value.copyWith(updatePosition: pos),
       );
@@ -131,7 +122,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
 
   // buffered pos
   void _listenToBufferedPosition() {
-    player.stream.buffer.listen((bufferedPosition) {
+    mediaKit.stream.buffer.listen((bufferedPosition) {
       playbackState.add(
         playbackState.value.copyWith(bufferedPosition: bufferedPosition),
       );
@@ -139,41 +130,55 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
   }
 
   // total duration pos
-  void _listenForDurationChanges() {
-    player.stream.duration.listen((duration) {
-      // TODO review
-      final index = player.state.playlist.index;
-      final newQueue = queue.value;
-      if (newQueue.isEmpty) return;
-      final oldMediaItem = newQueue[index];
-      final newMediaItem = oldMediaItem.copyWith(duration: duration);
-      newQueue[index] = newMediaItem;
-
-      queue.value = newQueue;
-      mediaItem.add(newMediaItem);
-    });
-  }
+  // void _listenForDurationChanges() {
+  //   mediaKit.stream.duration.listen((duration) {
+  //     // TODO review
+  //
+  //     playbackState.add(playbackState.value.copyWith(
+  //       updatePosition:
+  //     ))
+  //
+  //     final index = mediaKit.state.playlist.index;
+  //     final newQueue = queue.value;
+  //     if (newQueue.isEmpty) return;
+  //     final oldMediaItem = newQueue[index];
+  //     final newMediaItem = oldMediaItem.copyWith(duration: duration);
+  //     newQueue[index] = newMediaItem;
+  //
+  //     queue.value = newQueue;
+  //     mediaItem.add(newMediaItem);
+  //   });
+  // }
 
 ////////////////////////////////////////////////////////////////////////////////
 
   // media changes
-  void _listenToCurrentMedia() {
-    player.stream.playlist.listen((playlist) {
+  void _listenToMedia() {
+    mediaKit.stream.playlist.listen((playlist) {
       // update queue
-      // queue.value = playlist.medias.map(_convertToMediaItem).toList();
-      final index = playlist.index;
+      queue.value = playlist.medias
+          .map(
+            (e) => MediaRecord.fromMediaKit(e).toMediaItem(),
+          )
+          .toList();
+
+      // update current media index
+      final playingIndex = playlist.index;
+
       playbackState.add(
-        playbackState.value.copyWith(queueIndex: index),
+        playbackState.value.copyWith(queueIndex: playingIndex),
       );
+
       final currentQueue = queue.value;
+
       // update current playing item
-      mediaItem.add(currentQueue[index]);
+      mediaItem.add(currentQueue[playingIndex]);
     });
   }
 
   // speed state
   void _listenToPlaybackSpeed() {
-    player.stream.rate.listen((speed) {
+    mediaKit.stream.rate.listen((speed) {
       playbackState.add(
         playbackState.value.copyWith(speed: speed),
       );
@@ -188,7 +193,16 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     }
   }
 
-  Future<void> loadItems(List<MediaRecord> mediaItems) async {}
+  Future<void> addMediaItem(List<MediaRecord> mediaItems) async {
+    mediaKit.state.playlist.medias.addAll(
+      mediaItems.map((e) => e.toMediaKit()).toList(),
+    );
+  }
+
+  Future<void> loadMedia(List<MediaRecord> mediaItems) async {
+    final mList = mediaItems.map((e) => e.toMediaKit()).toList();
+    await mediaKit.openTracks(mList);
+  }
 
   @override
   Future<void> skipToQueueItem(int index) async {
@@ -198,53 +212,45 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
   // Direct Controls
   @override
   Future<void> play() async {
-    await player.play();
+    await mediaKit.play();
   }
 
   @override
   Future<void> pause() async {
-    await player.pause();
+    await mediaKit.pause();
   }
 
   @override
   Future<void> seek(Duration position) async {
-    await player.seek(position);
+    await mediaKit.seek(position);
   }
 
   @override
   Future<void> skipToNext() async {
-    await player.next();
+    await mediaKit.next();
   }
 
   @override
   Future<void> skipToPrevious() async {
-    await player.previous();
+    await mediaKit.previous();
   }
 
   @override
   Future<void> setSpeed(double speed) async {
-    await player.setPlaybackRate(speed);
+    await mediaKit.setPlaybackRate(speed);
   }
 
 // dispose methods
   @override
   Future<void> customAction(String name, [Map<String, dynamic>? extras]) async {
     if (name == 'dispose') {
-      await player.dispose();
+      await mediaKit.dispose();
     }
   }
 
   @override
   Future<void> stop() async {
-    await player.stop();
+    await mediaKit.stop();
     return super.stop();
   }
-}
-
-enum ProcessingState {
-  idle,
-  loading,
-  buffering,
-  ready,
-  completed,
 }

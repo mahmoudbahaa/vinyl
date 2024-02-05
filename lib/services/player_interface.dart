@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/widgets.dart';
+import 'package:vinyl/services/media_record.dart';
 
 const eMessage =
     'You forgot to initialize Vinyl\nCall "Vinyl.init()" in main.dart';
@@ -46,7 +47,6 @@ class DefaultMetadata {
 }
 
 abstract class PlayerInterface {
-  PlayerInterface();
 
   final isStopped = ValueNotifier(true);
   final currentSongTitle = ValueNotifier('');
@@ -70,7 +70,7 @@ abstract class PlayerInterface {
 
   ///Use this to load your data in
   Future<void> loadMedia(
-    List<MediaItem> input, {
+    List<MediaRecord> input, {
     Duration listenedPos = Duration.zero,
     int trackIndex = 0,
   });

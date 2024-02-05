@@ -1,5 +1,4 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:media_kit/media_kit.dart';
 
 part 'media_record.g.dart';
@@ -9,7 +8,6 @@ const String mediaUriKey = 'mu';
 const String mediaHeadersKey = 'mh';
 
 /// Store media information here
-@JsonSerializable()
 class MediaRecord {
   MediaRecord({
     required this.id,

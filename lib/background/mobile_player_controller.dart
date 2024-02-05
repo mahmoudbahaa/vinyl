@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:vinyl/background/background_service.dart';
+import 'package:vinyl/services/media_record.dart';
 import 'package:vinyl/services/player_interface.dart';
 import 'package:vinyl/vinyl.dart';
 
@@ -112,11 +113,11 @@ class MobilePlayerController extends PlayerInterface {
 
   @override
   Future<void> loadMedia(
-    List<MediaItem> input, {
+    List<MediaRecord> input, {
     Duration listenedPos = Duration.zero,
     int trackIndex = 0,
   }) async {
-    await audioHandler.addQueueItems(input);
+    await audioHandler.loadMedia(input);
     await audioHandler.skipToQueueItem(trackIndex);
     await audioHandler.seek(listenedPos);
   }

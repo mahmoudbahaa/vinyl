@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vinyl/services/media_record.dart';
 import 'package:vinyl/vinyl.dart';
 
 final vinyl = Vinyl.i;
@@ -78,10 +79,10 @@ class _HomePageState extends State<HomePage> {
         children: [
           ElevatedButton(
               onPressed: () async {
-                final item = MediaItem(
+                final item = MediaRecord(
                   id: '123123',
                   title: medias.first.name,
-                  extras: {'uri': medias.first.uri},
+                  mediaUri: medias.first.uri,
                 );
                 await vinyl.player.loadMedia([item]);
                 await vinyl.player.play();
