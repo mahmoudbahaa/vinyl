@@ -6,3 +6,8 @@
 ## 0.0.2
 
 *  added dispose
+
+## 0.0.3
+
+*  added platforms
+
