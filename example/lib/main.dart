@@ -63,16 +63,6 @@ class _HomePageState extends State<HomePage> {
       mediaUri:
           'https://www.learningcontainer.com/wp-content/uploads/2020/02/Sample-OGG-File.ogg',
     ),
-    MediaRecord(
-      id: 'test4',
-      title: 'todoasdasdasd',
-      mediaUri: 'https://www2.cs.uic.edu/~i101/SoundFiles/PinkPanther60.wav',
-    ),
-    MediaRecord(
-      id: 'test5',
-      title: 'asadsadtodo',
-      mediaUri: 'https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav',
-    ),
   ];
 
   Future<void> playMany() async {

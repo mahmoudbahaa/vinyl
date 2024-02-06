@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:vinyl/core/background/background_service.dart';
 import 'package:vinyl/core/background/mobile_player_controller.dart';
-import 'package:vinyl/core/non_background/desktop_player_service.dart';
+import 'package:vinyl/core/non_background/desktop_player_controller.dart';
 import 'package:vinyl/core/services/mediakit_player.dart';
 import 'package:vinyl/core/services/player_interface.dart';
 

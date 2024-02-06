@@ -56,14 +56,13 @@ class DesktopPlayerController extends PlayerInterface {
       }
       isStopped.value = false;
       final current = event.index;
-      final metaData = event.medias[current].extras;
+      final metaData = MediaRecord.fromJson(event.medias[current].extras!);
 
       // for prev,next buttons
       updatePrevNextButts(current, playList, event);
-      // for song title and image
-      // TODO add map methods
-      currentSongTitle.value = 'no title';
-      currentImage.value = '';
+
+      // for song metadata
+      setMediaMetaData(metaData);
     });
   }
 
@@ -193,5 +192,10 @@ class DesktopPlayerController extends PlayerInterface {
   }) async {
     await _player.jumpTrack(trackIndex);
     await _player.seek(position);
+  }
+
+  void setMediaMetaData(MediaRecord record) {
+    currentSongTitle.value = record.title;
+    currentImage.value = record.artUri ?? ''; // TODO add default image etc
   }
 }

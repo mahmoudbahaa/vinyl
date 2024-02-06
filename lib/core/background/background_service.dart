@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:media_kit/src/models/player_state.dart';
 import 'package:vinyl/core/services/media_record.dart';
 import 'package:vinyl/core/services/mediakit_player.dart';
 
@@ -78,6 +79,18 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
 
   void _listenIsBuffering() {
     mediaKit.stream.buffering.listen((bool buffering) {
+      if (mediaKit.state.completed) {
+        final isComplete = checkIfLastSong(mediaKit.state);
+        if (isComplete) {
+          playbackState.add(
+            playbackState.value.copyWith(
+              processingState: AudioProcessingState.completed,
+            ),
+          );
+          return;
+        }
+      }
+
       playbackState.add(
         playbackState.value.copyWith(
           processingState: buffering
@@ -89,21 +102,39 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
   }
 
   void _listenIsCompleted() {
-    mediaKit.stream.completed.listen((bool completed) {
+    mediaKit.stream.completed.listen((bool completed) async {
       final playerState = mediaKit.mediaKit.state;
 
-      final currentIndex = playerState.playlist.index;
-      final playlistLastIndex = playerState.playlist.medias.length - 1;
-      final playListComplete = currentIndex == playlistLastIndex;
+      if (playerState.playlist.medias.isEmpty) return;
+
+      final playListComplete = checkIfLastSong(playerState);
 
       playbackState.add(
         playbackState.value.copyWith(
           processingState: playListComplete
-              ? AudioProcessingState.ready
-              : AudioProcessingState.completed,
+              ? AudioProcessingState.completed
+              : AudioProcessingState.ready,
         ),
       );
+
+      // TLDR: do not remove this or once audio is complete the
+      // player wont reset
+      //
+      // we do this here along with mobile_player_controller.dart
+      // because this way we can get the processing.idle immediately
+      // as the audio completes.
+      // we don't get the same results if stop is called from controller
+      if (playListComplete) {
+        await stop();
+      }
     });
+  }
+
+  bool checkIfLastSong(PlayerState playerState) {
+    final currentIndex = playerState.playlist.index;
+    final playlistLastIndex = playerState.playlist.medias.length - 1;
+    final playListComplete = currentIndex == playlistLastIndex;
+    return playListComplete;
   }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,9 +162,8 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
   // total duration pos
   void _listenForDurationChanges() {
     mediaKit.stream.duration.listen((duration) {
-      // TODO review
       // we do this because not all links will have total duration available
-      // at runtime so we wait until we get a duration
+      // so at runtime so we wait until we get a duration
       if (queue.value.isEmpty) return;
       final newQueue = queue.value;
       final index = mediaKit.state.playlist.index;
@@ -153,6 +183,7 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
   // media changes
   void _listenToMedia() {
     mediaKit.stream.playlist.listen((playlist) {
+      if (playlist.medias.isEmpty) return;
       // update queue
       queue.value = playlist.medias
           .map(
@@ -249,6 +280,6 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
   @override
   Future<void> stop() async {
     await mediaKit.stop();
-    return super.stop();
+    await super.stop();
   }
 }

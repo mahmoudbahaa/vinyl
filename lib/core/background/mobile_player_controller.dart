@@ -47,18 +47,26 @@ class MobilePlayerController extends PlayerInterface {
   }
 
   void _listenToPlaybackState() {
-    audioHandler.playbackState.listen((playbackState) {
+    audioHandler.playbackState.listen((playbackState) async {
       if (queue.value.isNotEmpty) {
         isStopped.value = false;
         final isPlaying = playbackState.playing;
         final processingState = playbackState.processingState;
+
         if (processingState == AudioProcessingState.loading ||
             processingState == AudioProcessingState.buffering) {
           playButton.value = ButtonState.loading;
-        } else if (!isPlaying) {
+        }
+        // !(processingState == AudioProcessingState.idle)) is here because
+        // when stop is called from audio service process-state becomes idle
+        // so we can move to stop in controller
+        else if (!isPlaying &&
+            !(processingState == AudioProcessingState.idle)) {
           playButton.value = ButtonState.paused;
-        } else if (processingState != AudioProcessingState.completed) {
+        } else if (processingState == AudioProcessingState.ready) {
           playButton.value = ButtonState.playing;
+        } else {
+          await stop();
         }
       } else {
         isStopped.value = true;
@@ -114,8 +122,7 @@ class MobilePlayerController extends PlayerInterface {
   }
 
   @override
-  Future<void> loadMedia(
-    List<MediaRecord> input, {
+  Future<void> loadMedia(List<MediaRecord> input, {
     Duration listenedPos = Duration.zero,
     int trackIndex = 0,
   }) async {
@@ -171,7 +178,13 @@ class MobilePlayerController extends PlayerInterface {
   Future<void> customDispose() async => audioHandler.customAction('dispose');
 
   @override
-  Future<void> stop() async => audioHandler.stop();
+  Future<void> stop() async {
+    await audioHandler.stop();
+    isStopped.value = true;
+    queue.value = [];
+    currentSongTitle.value = '';
+    currentImage.value = '';
+  }
 
   @override
   Future<void> skipToTrack({
