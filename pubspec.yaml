@@ -1,28 +1,29 @@
 name: vinyl
-description: "Ui for players"
+description: "Batteries included audio lib"
 version: 0.0.2
 homepage: https://github.com/RA341/vinyl
 
 environment:
-  sdk: '>=3.3.0-91.0.dev <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  media_kit: ^1.1.10+1                             # Primary package.
-  media_kit_libs_audio: ^1.0.4                    # Native audio dependencies
   audio_service: ^0.18.12                       # background
   audio_video_progress_bar: ^2.0.1
+  media_kit: ^1.1.10+1                             # Primary package.
+  media_kit_libs_audio: ^1.0.4                    # Native audio dependencies
   cached_network_image: ^3.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  build_runner: ^2.4.8
   flutter_lints: ^3.0.1
-  very_good_analysis:
   json_annotation:
   json_serializable: ^6.7.1
-  build_runner: ^2.4.8
+  very_good_analysis:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

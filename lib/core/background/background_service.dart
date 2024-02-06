@@ -1,6 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:media_kit/src/models/player_state.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:vinyl/core/services/media_record.dart';
 import 'package:vinyl/core/services/mediakit_player.dart';
 

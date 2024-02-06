@@ -15,7 +15,7 @@ class DesktopPlayerController extends PlayerInterface {
   late final MediaKitPlayer _player;
 
   void setUpListeners() {
-    _listenToLogs();
+    // _listenToLogs();
     _listenToCurrentTrack();
     _listenToPlaybackState();
     _listenToCurrentPosition();
@@ -25,12 +25,11 @@ class DesktopPlayerController extends PlayerInterface {
     _listenToIsComplete();
   }
 
-  void _listenToLogs() {
-    _player.mediaKit.stream.log.listen((event) {
-      print('logsssssss');
-      print(event);
-    });
-  }
+  // void _listenToLogs() {
+  //   _player.mediaKit.stream.log.listen((event) {
+  //
+  //   });
+  // }
 
   void _listenToIsComplete() {
     _player.mediaKit.stream.completed.listen((event) async {

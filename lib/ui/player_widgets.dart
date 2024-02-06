@@ -2,7 +2,6 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:vinyl/core/services/player_interface.dart';
 import 'package:vinyl/vinyl.dart';
 
 class MultiListenable<A, B> extends StatelessWidget {
