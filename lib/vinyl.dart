@@ -11,7 +11,7 @@ import 'package:vinyl/core/services/player_interface.dart';
 
 export 'package:audio_service/audio_service.dart' show AudioServiceConfig;
 export 'package:vinyl/core/services/media_record.dart' show MediaRecord;
-
+export 'package:vinyl/core/services/player_interface.dart';
 
 final vinyl = Vinyl.i;
 
@@ -50,7 +50,7 @@ class Vinyl {
     }
   }
 
-  //TODO add dispose
+  void dispose() => player.dispose();
 
   late final PlayerInterface player;
 }

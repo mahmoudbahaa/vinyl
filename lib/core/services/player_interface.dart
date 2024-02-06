@@ -96,4 +96,6 @@ abstract class PlayerInterface {
   Future<void> seekBackward(Duration positionOffset);
 
   Future<void> stop();
+
+  Future<void> dispose();
 }

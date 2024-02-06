@@ -126,18 +126,6 @@ class DesktopPlayerController extends PlayerInterface {
     });
   }
 
-  // Media _convertToMedia(MediaItem item) {
-  //   final url = item
-  //
-  //   final g = MediaRecord(id: '123123', title: 'res', mediaUri: 'dsfdsf',);
-  //
-  //   return
-  //     Media
-  //       (
-  //
-  //     )
-  // }
-
   @override
   Future<void> loadMedia(
     List<MediaRecord> input, {
@@ -197,5 +185,11 @@ class DesktopPlayerController extends PlayerInterface {
   void setMediaMetaData(MediaRecord record) {
     currentSongTitle.value = record.title;
     currentImage.value = record.artUri ?? ''; // TODO add default image etc
+  }
+
+  @override
+  Future<void> dispose() async {
+    await stop();
+    await _player.dispose();
   }
 }

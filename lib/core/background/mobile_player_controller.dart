@@ -175,7 +175,11 @@ class MobilePlayerController extends PlayerInterface {
   @override
   Future<void> setSpeed() async => audioHandler.setSpeed(playbackSpeed.value);
 
-  Future<void> customDispose() async => audioHandler.customAction('dispose');
+  @override
+  Future<void> dispose() async {
+    await stop();
+    await audioHandler.customAction('dispose');
+  }
 
   @override
   Future<void> stop() async {
