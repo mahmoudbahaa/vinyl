@@ -32,6 +32,9 @@ dependencies:
     sdk: flutter
 
   vinyl:
+#    git:
+#      url: https://github.com/RA341/vinyl
+#      ref: [latest commit reference]
     path: ../
 
   # The following adds the Cupertino Icons font to your application.

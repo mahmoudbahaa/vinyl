@@ -13,9 +13,53 @@ and the Flutter guide for
 
 Batteries included audio util package
 
-## Features
+## About
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+I needed a quick way to scaffold applications that needed audio in flutter,
+and I needed them to work on all platforms without any additional setup.
+
+Without this library, I would have to write all player logic, controller classes and do the state management manually.
+
+This library allows you to hit the ground running. Just do the initial device-specific setup, and you are good to go.
+
+## QuickStart
+Step 1. include the lib in ``pubspec.yml``
+
+```yaml
+  vinyl:
+    git:
+      url: https://github.com/RA341/vinyl
+      ref: [latest commit reference]
+
+```
+
+Step 2. Setup according to the [specific platforms](#getting-started) 
+
+Step 3. Initialize Vinyl
+```dart
+Future<void> main() async {
+  ....
+  await vinyl.init(AudioConfig(...)) // if you need background player support
+  // or
+  await vinyl.init() // if you don't
+  ....
+  runapp()
+}
+```
+
+Step 4. You are good to go 
+
+Just call ``vinyl.player`` to get access player methods and metadata.  
+
+### Please Note
+Who this library isn't for 
+
+If you need more customization with the audio player, this may not be the library.
+
+While I tried to have most features accessible, you do lose the granularity that comes with doing the setup code yourself.
+
+If you feel something is lacking, feel free to open an issue
+
 
 ## Getting started
 
@@ -160,26 +204,62 @@ Not supported
 
 AudioServiceConfig is required for background audio read more about [here](https://pub.dev/packages/audio_service)
 
+**Note**
+
+'vinyl' is a helper variable for your convenience.
+
+Callable from anywhere, will always return the initialized instance of Vinyl
+
+Vinyl itself is a singleton and will always have only single instance
+
+Internally it is initialized like so
+```vinyl = Vinyl.i;```
+
+
+if you need to use background player
+
 ```dart
 final config = AudioServiceConfig(....);
-Vinyl.init(audioConfig:config);
+vinyl.init(audioConfig:config);
 ```
+
+Without background
+```dart
+vinyl.init();
+```
+
 
 ## Usage
-### Implement your media methods
-
-You must implement the methods required to load in media files
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+All media methods are accessed using the player controller
 
 ```dart
-
-const like = 'sample';
+vinyl.player
 ```
 
-## Additional information
+```dart
+vinyl.player.play()
+vinyl.player.pause()
+vinyl.player.loadMedia()
+.....
+```
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+More Information can be found in [example](/example/)
+
+## Credits
+
+This library is a helpful wrapper around the excellent work done by authors of mediakit and audioservice.
+
+Please consider supporting them if you can
+
+[Mediakit](https://github.com/media-kit/media-kit)
+
+[audio_service](https://pub.dev/packages/audio_service)
+
+Inspired by the blog written by sugrach
+
+https://suragch.medium.com/background-audio-in-flutter-with-audio-service-and-just-audio-3cce17b4a7d
+
+## Contributing
+
+Anyone is welcome is contribute, as usual fork the repo make your changes and open a pull request.
+

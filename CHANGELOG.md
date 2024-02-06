@@ -1,3 +1,4 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+*  Initial release.
+*  Known bugs: Wav files can be a bit wonky recommended to not use them 
