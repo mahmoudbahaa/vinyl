@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:media_kit/media_kit.dart';
 import 'package:vinyl/core/services/media_record.dart';
 import 'package:vinyl/core/services/mediakit_player.dart';
@@ -126,6 +127,12 @@ class DesktopPlayerController extends PlayerInterface {
   }
 
   @override
+  PlayerStream get stream => _player.stream;
+
+  @override
+  PlayerState get state => _player.state;
+
+  @override
   Future<void> loadMedia(
     List<MediaRecord> input, {
     Duration listenedPos = Duration.zero,
@@ -163,6 +170,13 @@ class DesktopPlayerController extends PlayerInterface {
 
   @override
   Future<void> setSpeed() => _player.setPlaybackRate(playbackSpeed.value);
+
+  @override
+  Future<void> setVolume(double volume) async => _player.setVolume(volume);
+
+  @override
+  Future<void> setPlaybackRate(double rate) async =>
+      _player.setPlaybackRate(rate);
 
   @override
   Future<void> stop() async {
