@@ -18,20 +18,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  audio_service: ^0.18.12                       # background
-  audio_video_progress_bar: ^2.0.1
-  media_kit: ^1.1.10+1                             # Primary package.
-  media_kit_libs_audio: ^1.0.4                    # Native audio dependencies
+  audio_service: ^0.18.16                       # background
+  audio_video_progress_bar: ^2.0.3
+  media_kit: ^1.1.11                            # Primary package.
+  media_kit_libs_audio: ^1.0.5                    # Native audio dependencies
   cached_network_image: ^3.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  build_runner: ^2.4.8
-  flutter_lints: ^3.0.1
-  json_annotation:
-  json_serializable: ^6.7.1
-  very_good_analysis:
+  build_runner: ^2.4.14
+  flutter_lints: ^3.0.2
+  json_annotation: ^4.9.0
+  json_serializable: ^6.9.3
+  very_good_analysis: ^7.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
