@@ -214,6 +214,17 @@ class MediaKitBackgroundPlayer extends BaseAudioHandler {
     });
   }
 
+  PlayerStream get stream => mediaKit.stream;
+  PlayerState get state => mediaKit.state;
+
+  Future<void> setVolume(double volume) async {
+    await mediaKit.setVolume(volume);
+  }
+
+  Future<void> setPlaybackRate(double rate) async {
+    await mediaKit.setPlaybackRate(rate);
+  }
+
 ////////////////////////////////////////////////////////////////////////////////
   // queue controls
   void clearQueue() {

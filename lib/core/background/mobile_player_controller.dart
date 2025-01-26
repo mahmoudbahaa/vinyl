@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:vinyl/core/background/background_service.dart';
 import 'package:vinyl/core/services/media_record.dart';
 import 'package:vinyl/core/services/player_interface.dart';
@@ -122,7 +123,14 @@ class MobilePlayerController extends PlayerInterface {
   }
 
   @override
-  Future<void> loadMedia(List<MediaRecord> input, {
+  PlayerStream get stream => audioHandler.stream;
+
+  @override
+  PlayerState get state => audioHandler.state;
+
+  @override
+  Future<void> loadMedia(
+    List<MediaRecord> input, {
     Duration listenedPos = Duration.zero,
     int trackIndex = 0,
   }) async {
@@ -174,6 +182,13 @@ class MobilePlayerController extends PlayerInterface {
 
   @override
   Future<void> setSpeed() async => audioHandler.setSpeed(playbackSpeed.value);
+
+  @override
+  Future<void> setVolume(double volume) async => audioHandler.setVolume(volume);
+
+  @override
+  Future<void> setPlaybackRate(double rate) async =>
+      audioHandler.setPlaybackRate(rate);
 
   @override
   Future<void> dispose() async {

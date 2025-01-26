@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:vinyl/core/services/media_record.dart';
 
 const eMessage =
     'You forgot to initialize Vinyl\nCall "Vinyl.init()" in main.dart';
-
 
 enum ButtonState {
   paused,
@@ -35,7 +35,6 @@ class ProgressBarState {
   }
 }
 
-
 /// Define default metadata to display
 /// e.g. default image or title
 class DefaultMetadata {
@@ -46,7 +45,6 @@ class DefaultMetadata {
 }
 
 abstract class PlayerInterface {
-
   final isStopped = ValueNotifier(true);
   final currentSongTitle = ValueNotifier('');
   final currentImage = ValueNotifier('');
@@ -67,6 +65,10 @@ abstract class PlayerInterface {
 
 // final isShuffleModeEnabled = ValueNotifier(false);
 
+  PlayerStream get stream;
+
+  PlayerState get state;
+
   ///Use this to load your data in
   Future<void> loadMedia(
     List<MediaRecord> input, {
@@ -83,6 +85,10 @@ abstract class PlayerInterface {
   Future<void> previous();
 
   Future<void> setSpeed();
+
+  Future<void> setVolume(double volume);
+
+  Future<void> setPlaybackRate(double rate);
 
   Future<void> seek(Duration position);
 
